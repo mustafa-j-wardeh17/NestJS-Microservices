@@ -1,18 +1,24 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from './product.entity';
 import { createProductDto } from './dto/create-product.dto';
 import { updateProductDto } from './dto/update-product.dto';
+import { ClientProxy } from '@nestjs/microservices';
 
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productServices: ProductService) { }
+    constructor(
+        private readonly productServices: ProductService,
+        @Inject('PRODUCT_SERVICE') private readonly client: ClientProxy
+
+    ) { }
 
     //---------------------------------
     //------Get All Products-----------
     //---------------------------------
     @Get()
     async allProducts(): Promise<Product[]> {
+        this.client.emit('hello','Hello From RabbitMQ')
         return this.productServices.all()
     }
 
@@ -38,7 +44,7 @@ export class ProductController {
     }
 
     @Delete(":id")
-    async deleteProduct(@Param('id') id: number){
+    async deleteProduct(@Param('id') id: number) {
         return this.productServices.deleteOne(id)
     }
 }
