@@ -1,7 +1,6 @@
 import { Prop, Schema, SchemaFactory } from "@nestjs/mongoose";
 import { Document } from "mongoose";
 
-export type ProductDocument = Product & Document
 
 @Schema()
 export class Product {
@@ -20,3 +19,5 @@ export class Product {
 
 export const ProductSchema = SchemaFactory.createForClass(Product)
 // automatically generates the corresponding Mongoose schema from the Product class decorated with @Prop() and @Schema() decorators.
+
+export type ProductDocument = Product & Document
