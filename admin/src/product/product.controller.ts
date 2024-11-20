@@ -75,12 +75,14 @@ export class ProductController {
         if (!product) {
             throw new NotFoundException(`Product with id=${id} not found`);
         }
-        return this.productServices.update(
+        const updatedProductLikes = await this.productServices.update(
             product.id,
             {
                 ...product,
                 likes: product.likes + 1
             }, // Increment likes explicitly
         )
+        this.client.emit('updatedProductLikes', updatedProductLikes)
+        return updatedProductLikes
     }
 }

@@ -14,6 +14,10 @@ export class ProductController {
     async getProducts() {
         return this.productService.all()
     }
+    @Get(':id')
+    async findProduct(@Param('id') id: number) {
+        return this.productService.get(id)
+    }
 
     @Post(':id/like')
     async like(@Param('id') id: number) {
@@ -23,10 +27,10 @@ export class ProductController {
         }
 
         this.httpService
-        .post(`http://localhost:8000/api/products/${id}/like`, {})
-        .subscribe(res => {
-            console.log(res)
-        })
+            .post(`http://localhost:8000/api/products/${id}/like`, {})
+            .subscribe(res => {
+                console.log(res)
+            })
         return this.productService.update({
             id: product.id,
             likes: product.likes + 1, // Increment likes explicitly
@@ -57,6 +61,17 @@ export class ProductController {
             image: product.image,
         })
     }
+
+    @EventPattern('updatedProductLikes')
+    async updatedProductLikes(updatedProductLikes) {
+        await this.productService.update({
+            id: updatedProductLikes.id,
+            likes: updatedProductLikes.likes,
+            title: updatedProductLikes.title,
+            image: updatedProductLikes.image,
+        })
+    }
+
     @EventPattern('product_deleted')
     async deletedProduct(id: number) {
         await this.productService.delete(id)
