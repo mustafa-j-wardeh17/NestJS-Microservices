@@ -39,6 +39,7 @@ export class ProductController {
     //---------------------------------
     @Get(':id')
     async getProduct(@Param('id') id: number): Promise<Product> {
+        this.client.emit('getProduct', id)
         return this.productServices.get(id)
     }
 
