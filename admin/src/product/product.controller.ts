@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Inject, Param, Patch, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Inject, NotFoundException, Param, Patch, Post } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { Product } from './product.entity';
 import { createProductDto } from './dto/create-product.dto';
@@ -65,5 +65,22 @@ export class ProductController {
         const deletedMessage = this.productServices.deleteOne(id)
         this.client.emit('product_deleted', id)
         return deletedMessage
+    }
+
+
+
+    @Post(':id/like')
+    async like(@Param('id') id: number) {
+        const product = await this.productServices.get(id)
+        if (!product) {
+            throw new NotFoundException(`Product with id=${id} not found`);
+        }
+        return this.productServices.update(
+            product.id,
+            {
+                ...product,
+                likes: product.likes + 1
+            }, // Increment likes explicitly
+        )
     }
 }

@@ -1,10 +1,14 @@
 import { Controller, Get, NotFoundException, Param, Post } from '@nestjs/common';
 import { ProductService } from './product.service';
 import { EventPattern } from '@nestjs/microservices';
+import { HttpService } from '@nestjs/axios';
 
 @Controller('products')
 export class ProductController {
-    constructor(private readonly productService: ProductService) { }
+    constructor(
+        private readonly productService: ProductService,
+        private readonly httpService: HttpService,
+    ) { }
 
     @Get()
     async getProducts() {
@@ -17,8 +21,14 @@ export class ProductController {
         if (!product) {
             throw new NotFoundException(`Product with id=${id} not found`);
         }
+
+        this.httpService
+        .post(`http://localhost:8000/api/products/${id}/like`, {})
+        .subscribe(res => {
+            console.log(res)
+        })
         return this.productService.update({
-            id: product.id, 
+            id: product.id,
             likes: product.likes + 1, // Increment likes explicitly
         })
     }
