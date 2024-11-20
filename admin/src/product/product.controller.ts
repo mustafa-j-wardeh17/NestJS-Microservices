@@ -18,33 +18,51 @@ export class ProductController {
     //---------------------------------
     @Get()
     async allProducts(): Promise<Product[]> {
-        this.client.emit('hello','Hello From RabbitMQ')
+        this.client.emit('hello', 'Hello From RabbitMQ')
         return this.productServices.all()
     }
 
+    //---------------------------------
+    //--------Create Product-----------
+    //---------------------------------
     @Post()
     async createProduct(
         @Body() createProductInput: createProductDto
     ): Promise<Product> {
-        return this.productServices.create(createProductInput)
+        const product = await this.productServices.create(createProductInput)
+        this.client.emit('product_created', product)
+        return product
     }
 
+    //---------------------------------
+    //----------Get Product------------
+    //---------------------------------
     @Get(':id')
     async getProduct(@Param('id') id: number): Promise<Product> {
         return this.productServices.get(id)
     }
 
 
+    //---------------------------------
+    //---------Update Product----------
+    //---------------------------------
     @Patch(':id')
     async updateProduct(
         @Param('id') id: number,
         @Body() updateProductUnput: updateProductDto
     ): Promise<Product> {
-        return this.productServices.update(id, updateProductUnput)
+        const product = await this.productServices.update(id, updateProductUnput)
+        this.client.emit('product_updated', product)
+        return product
     }
 
+    //---------------------------------
+    //---------Delete Product----------
+    //---------------------------------
     @Delete(":id")
     async deleteProduct(@Param('id') id: number) {
-        return this.productServices.deleteOne(id)
+        const deletedMessage = this.productServices.deleteOne(id)
+        this.client.emit('product_deleted', id)
+        return deletedMessage
     }
 }
