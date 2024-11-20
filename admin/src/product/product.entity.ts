@@ -10,5 +10,8 @@ export class Product {
     title: string;
     
     @Column()
-    mage: string;
+    image: string;
+
+    @Column({default:0})
+    likes:number;
 }
