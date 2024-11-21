@@ -7,3 +7,9 @@ export interface AdminProduct {
 export interface MainProduct extends AdminProduct {
     _id: string
 }
+
+
+export interface createProduct {
+    title: string;
+    image: string;
+}
