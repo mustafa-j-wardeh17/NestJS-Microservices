@@ -18,7 +18,6 @@ export class ProductController {
     //---------------------------------
     @Get()
     async allProducts(): Promise<Product[]> {
-        this.client.emit('hello', 'Hello From RabbitMQ')
         return this.productServices.all()
     }
 
