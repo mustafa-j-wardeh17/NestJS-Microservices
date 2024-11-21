@@ -4,3 +4,6 @@ export interface AdminProduct {
     image: string;
     likes: number
 }
+export interface MainProduct extends AdminProduct {
+    _id: string
+}
